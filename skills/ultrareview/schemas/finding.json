@@ -1,0 +1,68 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ReviewerFindings",
+  "description": "Output schema for a reviewer subagent.",
+  "type": "object",
+  "required": ["dimension", "findings"],
+  "properties": {
+    "dimension": {
+      "type": "string",
+      "description": "The review dimension this reviewer covers.",
+      "enum": [
+        "logic-bugs",
+        "concurrency",
+        "error-handling",
+        "security",
+        "api-contracts",
+        "performance",
+        "best-practices",
+        "architecture",
+        "rust-improvements",
+        "arch-improvements"
+      ]
+    },
+    "findings": {
+      "type": "array",
+      "description": "List of findings. Empty array is valid.",
+      "items": {
+        "type": "object",
+        "required": ["file", "line", "col", "severity", "title"],
+        "properties": {
+          "file": {
+            "type": "string",
+            "description": "Relative path to the file."
+          },
+          "line": {
+            "type": "integer",
+            "description": "Line number (1-indexed)."
+          },
+          "col": {
+            "type": "integer",
+            "description": "Column number (1-indexed)."
+          },
+          "severity": {
+            "type": "string",
+            "enum": ["error", "warning", "info"],
+            "description": "error/warning for bugs, info for improvements."
+          },
+          "title": {
+            "type": "string",
+            "description": "One-line summary of the finding."
+          },
+          "evidence": {
+            "type": "string",
+            "description": "For bugs: concrete evidence the bug exists."
+          },
+          "rationale": {
+            "type": "string",
+            "description": "For improvements: why this change is beneficial."
+          },
+          "suggestion": {
+            "type": "string",
+            "description": "Suggested fix or improvement."
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "VerifierVerdicts",
+  "description": "Output schema for a verifier subagent.",
+  "type": "object",
+  "required": ["verdicts"],
+  "properties": {
+    "verdicts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "finding_id",
+          "verdict",
+          "confidence",
+          "independent_reasoning"
+        ],
+        "properties": {
+          "finding_id": {
+            "type": "string",
+            "description": "ID of the finding being verified (e.g., concurrency-0)."
+          },
+          "verdict": {
+            "type": "string",
+            "enum": ["confirmed", "rejected", "uncertain"],
+            "description": "Whether the finding was independently confirmed."
+          },
+          "confidence": {
+            "type": "string",
+            "enum": ["high", "medium", "low"],
+            "description": "Confidence level in the verdict."
+          },
+          "independent_reasoning": {
+            "type": "string",
+            "description": "The verifier's own reasoning, without knowledge of the reviewer's analysis."
+          }
+        }
+      }
+    }
+  }
+}

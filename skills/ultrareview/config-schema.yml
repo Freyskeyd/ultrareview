@@ -1,0 +1,103 @@
+# .ultrareview.yml schema
+# Place .ultrareview.yml at your project root to set defaults.
+# CLI arguments override these values.
+
+reviewer:
+  model:
+    type: string
+    default: "claude-opus-4-6"
+    description: >
+      Model identifier for reviewer agents.
+      Any model supported by the agent runtime.
+  max_parallel:
+    type: integer
+    default: 10
+    minimum: 1
+    maximum: 20
+    description: >
+      Maximum number of reviewer agents to dispatch concurrently.
+
+verifier:
+  model:
+    type: string
+    default: "gpt-5.5"
+    description: >
+      Model identifier for verifier agents.
+      Should differ from reviewer model for cross-model debiasing.
+
+# Dimension configuration
+# Each dimension has a language scope: "any" (language-agnostic)
+# or a specific language (e.g., "rust", "python", "typescript").
+# The orchestrator auto-detects the primary language
+# from changed file extensions and only enables dimensions
+# whose language matches "any" or the detected language.
+# Explicit dimensions list in config overrides auto-detection.
+
+dimensions:
+  type: array
+  default: auto
+  description: >
+    Which review dimensions to enable.
+    Set to "auto" (default) to auto-detect from file extensions.
+    Set to an explicit list to override auto-detection.
+    Each dimension dispatches one reviewer agent.
+  valid_values:
+    # Language-agnostic dimensions (always enabled)
+    - logic-bugs          # language: any
+    - concurrency         # language: any
+    - error-handling      # language: any
+    - security            # language: any
+    - api-contracts       # language: any
+    - performance         # language: any
+    - architecture        # language: any
+
+    # Rust-specific dimensions (enabled when Rust files are in diff)
+    - best-practices      # language: rust
+    - rust-improvements   # language: rust
+
+    # Architecture improvements (always enabled)
+    - arch-improvements   # language: any
+
+  language_map:
+    logic-bugs: any
+    concurrency: any
+    error-handling: any
+    security: any
+    api-contracts: any
+    performance: any
+    architecture: any
+    best-practices: rust
+    rust-improvements: rust
+    arch-improvements: any
+
+output:
+  format:
+    type: string
+    default: "diagnostics"
+    enum: [diagnostics]
+    description: >
+      Output format for findings.
+      Currently only compiler-style diagnostics are supported.
+  report:
+    type: boolean
+    default: true
+    description: >
+      Generate a Markdown summary report alongside diagnostics.
+  include_improvements:
+    type: boolean
+    default: true
+    description: >
+      Include improvement findings (info severity) in output.
+      Set false to only see bugs.
+  verbose:
+    type: boolean
+    default: false
+    description: >
+      Include rejected findings in the Markdown report.
+  bridge:
+    type: string
+    default: "auto"
+    enum: [auto, off]
+    description: >
+      Post confirmed findings to ultrareview-bridge MCP tools when available.
+      Set to "off" to suppress editor diagnostics output.
