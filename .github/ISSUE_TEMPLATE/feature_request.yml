@@ -1,0 +1,30 @@
+name: Feature request
+description: Suggest an improvement to Ultrareview.
+title: "feat: "
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What user problem should this solve?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposal
+      description: What should change?
+    validations:
+      required: true
+  - type: dropdown
+    id: audience
+    attributes:
+      label: Primary audience
+      options:
+        - AI coding power users
+        - OSS maintainers
+        - Editor users
+        - Agent/tooling builders
+    validations:
+      required: true
