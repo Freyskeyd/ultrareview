@@ -195,6 +195,22 @@ git ref:
 
 If `.ultrareview.yml` exists at the project root, the skill reads it for defaults.
 Command-line arguments override config values.
+Projects can also require review skills to be loaded before reviewers run:
+
+```yaml
+mandatory_skills:
+  project:
+    - tech-rust
+  languages:
+    rust:
+      - tech-rust
+    typescript:
+      - shadcn
+```
+
+Mandatory skills fail fast if they are not installed in the active agent environment.
+Their review guidance is included in reviewer subagent prompts,
+because subagents do not automatically inherit the orchestrator's loaded skill context.
 
 ## MCP Tools
 
