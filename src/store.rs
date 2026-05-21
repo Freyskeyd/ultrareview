@@ -93,7 +93,7 @@ impl FindingsStore {
     fn default_cache_path() -> PathBuf {
         dirs::cache_dir()
             .unwrap_or_else(std::env::temp_dir)
-            .join("ultrareview-bridge")
+            .join("open-ultrareview-bridge")
             .join("findings.json")
     }
 

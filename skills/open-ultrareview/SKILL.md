@@ -1,19 +1,19 @@
 ---
-name: ultrareview
+name: open-ultrareview
 description: >
   Use when reviewing code changes with multiple specialized agents,
-  independent verification, and optional ultrareview-bridge diagnostics.
+  independent verification, and optional open-ultrareview-bridge diagnostics.
 argument-hint: "--reviewer=<model> --verifier=<model> <base-ref>"
 ---
 
-# Ultrareview
+# Open Ultrareview
 
 Deep, multi-agent code review that runs locally.
 Specialized reviewer agents analyze your diff in parallel
 across multiple dimensions (logic bugs, concurrency, security, etc.).
 A verifier agent using a different model
 independently confirms each finding before it is reported.
-When ultrareview-bridge MCP tools are available,
+When open-ultrareview-bridge MCP tools are available,
 confirmed findings are also posted to the bridge
 so editors can show them as diagnostics.
 
@@ -31,15 +31,15 @@ The skill accepts optional arguments:
 Examples:
 
 ```text
-/ultrareview
-/ultrareview --reviewer=claude-sonnet-4 --verifier=o3
-/ultrareview main
-/ultrareview --reviewer=claude-opus-4 origin/develop
+/open-ultrareview
+/open-ultrareview --reviewer=claude-sonnet-4 --verifier=o3
+/open-ultrareview main
+/open-ultrareview --reviewer=claude-opus-4 origin/develop
 ```
 
 ## Configuration
 
-If `.ultrareview.yml` exists at the project root,
+If `.open-ultrareview.yml` exists at the project root,
 it is read for defaults.
 CLI arguments override config file values.
 See [config-schema.yml](config-schema.yml) for the full schema.

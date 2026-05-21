@@ -1,5 +1,5 @@
-# .ultrareview.yml schema
-# Place .ultrareview.yml at your project root to set defaults.
+# .open-ultrareview.yml schema
+# Place .open-ultrareview.yml at your project root to set defaults.
 # CLI arguments override these values.
 
 reviewer:
@@ -128,5 +128,5 @@ output:
     default: "auto"
     enum: [auto, off]
     description: >
-      Post confirmed findings to ultrareview-bridge MCP tools when available.
+      Post confirmed findings to open-ultrareview-bridge MCP tools when available.
       Set to "off" to suppress editor diagnostics output.

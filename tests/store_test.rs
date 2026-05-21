@@ -1,7 +1,7 @@
 use std::path::PathBuf;
 
-use ultrareview_bridge::store::FindingsStore;
-use ultrareview_bridge::types::{FindingInput, SeverityInput};
+use open_ultrareview_bridge::store::FindingsStore;
+use open_ultrareview_bridge::types::{FindingInput, SeverityInput};
 
 fn sample_input() -> FindingInput {
     FindingInput {
@@ -25,7 +25,7 @@ fn post_and_query_findings() {
 
     let affected = store.post_findings(
         project.clone(),
-        "ultrareview".to_string(),
+        "open-ultrareview".to_string(),
         vec![sample_input()],
     );
 
@@ -43,14 +43,18 @@ fn incremental_posting_appends_findings() {
 
     store.post_findings(
         project.clone(),
-        "ultrareview".to_string(),
+        "open-ultrareview".to_string(),
         vec![sample_input()],
     );
 
     let mut input2 = sample_input();
     input2.line = 99;
     input2.title = "Second finding".to_string();
-    store.post_findings(project.clone(), "ultrareview".to_string(), vec![input2]);
+    store.post_findings(
+        project.clone(),
+        "open-ultrareview".to_string(),
+        vec![input2],
+    );
 
     let findings = store.get_file_findings(&project, "src/main.rs");
     assert_eq!(findings.len(), 2);
@@ -63,7 +67,7 @@ fn clearing_one_source_keeps_other_sources() {
 
     store.post_findings(
         project.clone(),
-        "ultrareview".to_string(),
+        "open-ultrareview".to_string(),
         vec![sample_input()],
     );
 
@@ -72,7 +76,7 @@ fn clearing_one_source_keeps_other_sources() {
     clippy_input.category = "clippy".to_string();
     store.post_findings(project.clone(), "clippy".to_string(), vec![clippy_input]);
 
-    let cleared = store.clear_findings(&project, "ultrareview");
+    let cleared = store.clear_findings(&project, "open-ultrareview");
     assert_eq!(cleared, vec!["src/main.rs"]);
 
     let findings = store.get_file_findings(&project, "src/main.rs");
@@ -87,7 +91,7 @@ fn dismissed_finding_stays_dismissed_after_clear_and_repost() {
 
     store.post_findings(
         project.clone(),
-        "ultrareview".to_string(),
+        "open-ultrareview".to_string(),
         vec![sample_input()],
     );
     let id = store.get_file_findings(&project, "src/main.rs")[0]
@@ -98,10 +102,10 @@ fn dismissed_finding_stays_dismissed_after_clear_and_repost() {
         store.dismiss_finding(&id),
         Some((project.clone(), "src/main.rs".to_string()))
     );
-    store.clear_findings(&project, "ultrareview");
+    store.clear_findings(&project, "open-ultrareview");
     store.post_findings(
         project.clone(),
-        "ultrareview".to_string(),
+        "open-ultrareview".to_string(),
         vec![sample_input()],
     );
 
@@ -115,7 +119,7 @@ fn restore_findings_undismisses_project_findings() {
 
     store.post_findings(
         project.clone(),
-        "ultrareview".to_string(),
+        "open-ultrareview".to_string(),
         vec![sample_input()],
     );
     let id = store.get_file_findings(&project, "src/main.rs")[0]
@@ -135,18 +139,18 @@ fn dismissed_findings_are_scoped_to_project_and_source() {
 
     store.post_findings(
         project_a.clone(),
-        "ultrareview".to_string(),
+        "open-ultrareview".to_string(),
         vec![sample_input()],
     );
     let id = store.get_file_findings(&project_a, "src/main.rs")[0]
         .id
         .clone();
     store.dismiss_finding(&id);
-    store.clear_findings(&project_a, "ultrareview");
+    store.clear_findings(&project_a, "open-ultrareview");
 
     store.post_findings(
         project_b.clone(),
-        "ultrareview".to_string(),
+        "open-ultrareview".to_string(),
         vec![sample_input()],
     );
     store.post_findings(
@@ -167,12 +171,12 @@ fn restore_findings_only_clears_dismissals_for_that_project() {
 
     store.post_findings(
         project_a.clone(),
-        "ultrareview".to_string(),
+        "open-ultrareview".to_string(),
         vec![sample_input()],
     );
     store.post_findings(
         project_b.clone(),
-        "ultrareview".to_string(),
+        "open-ultrareview".to_string(),
         vec![sample_input()],
     );
 
@@ -202,7 +206,7 @@ fn persistent_store_round_trips_findings() {
     let mut store = FindingsStore::with_cache_path(cache_path.clone());
     store.post_findings(
         project.clone(),
-        "ultrareview".to_string(),
+        "open-ultrareview".to_string(),
         vec![sample_input()],
     );
 
@@ -220,7 +224,7 @@ fn relative_project_entries_can_be_migrated_to_absolute_root() {
 
     store.post_findings(
         relative_project.clone(),
-        "ultrareview".to_string(),
+        "open-ultrareview".to_string(),
         vec![sample_input()],
     );
 

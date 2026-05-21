@@ -1,8 +1,8 @@
 use std::path::PathBuf;
 
-use ultrareview_bridge::bridge::BridgeState;
-use ultrareview_bridge::store::FindingsStore;
-use ultrareview_bridge::types::{FindingInput, SeverityInput, StoreEvent};
+use open_ultrareview_bridge::bridge::BridgeState;
+use open_ultrareview_bridge::store::FindingsStore;
+use open_ultrareview_bridge::types::{FindingInput, SeverityInput, StoreEvent};
 
 #[tokio::test]
 async fn full_bridge_flow_sends_events_and_updates_store() {
@@ -14,7 +14,7 @@ async fn full_bridge_flow_sends_events_and_updates_store() {
         let mut store = bridge.store.write().await;
         store.post_findings(
             project.clone(),
-            "ultrareview".to_string(),
+            "open-ultrareview".to_string(),
             vec![FindingInput {
                 file: "src/main.rs".to_string(),
                 line: 10,

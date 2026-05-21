@@ -1,14 +1,14 @@
 use std::path::PathBuf;
 
+use open_ultrareview_bridge::lsp_server::finding_to_diagnostic;
+use open_ultrareview_bridge::types::{Finding, Severity};
 use tower_lsp::lsp_types::{DiagnosticSeverity, NumberOrString};
-use ultrareview_bridge::lsp_server::finding_to_diagnostic;
-use ultrareview_bridge::types::{Finding, Severity};
 
 #[test]
 fn finding_maps_to_lsp_diagnostic() {
     let finding = Finding {
-        id: "ultrareview-security-0".to_string(),
-        source: "ultrareview".to_string(),
+        id: "open-ultrareview-security-0".to_string(),
+        source: "open-ultrareview".to_string(),
         project: PathBuf::from("/tmp/project"),
         file: "src/main.rs".to_string(),
         line: 12,
@@ -28,7 +28,7 @@ fn finding_maps_to_lsp_diagnostic() {
     assert_eq!(diagnostic.range.start.line, 11);
     assert_eq!(diagnostic.range.start.character, 2);
     assert_eq!(diagnostic.severity, Some(DiagnosticSeverity::ERROR));
-    assert_eq!(diagnostic.source.as_deref(), Some("ultrareview"));
+    assert_eq!(diagnostic.source.as_deref(), Some("open-ultrareview"));
     assert_eq!(
         diagnostic.code,
         Some(NumberOrString::String("security".to_string()))

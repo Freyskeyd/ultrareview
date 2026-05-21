@@ -1,12 +1,12 @@
 use zed::settings::LspSettings;
 use zed_extension_api::{self as zed, LanguageServerId, Result};
 
-const SERVER_NAME: &str = "ultrareview-bridge";
+const SERVER_NAME: &str = "open-ultrareview-bridge";
 const DEFAULT_PORT: &str = "19999";
 
-struct UltrareviewBridgeExtension;
+struct OpenUltrareviewBridgeExtension;
 
-impl UltrareviewBridgeExtension {
+impl OpenUltrareviewBridgeExtension {
     fn default_args() -> Vec<String> {
         vec![
             "lsp".to_string(),
@@ -16,7 +16,7 @@ impl UltrareviewBridgeExtension {
     }
 }
 
-impl zed::Extension for UltrareviewBridgeExtension {
+impl zed::Extension for OpenUltrareviewBridgeExtension {
     fn new() -> Self {
         Self
     }
@@ -55,4 +55,4 @@ impl zed::Extension for UltrareviewBridgeExtension {
     }
 }
 
-zed::register_extension!(UltrareviewBridgeExtension);
+zed::register_extension!(OpenUltrareviewBridgeExtension);

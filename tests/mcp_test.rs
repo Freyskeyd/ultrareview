@@ -1,11 +1,11 @@
 use std::path::PathBuf;
 
-use ultrareview_bridge::bridge::BridgeState;
-use ultrareview_bridge::mcp_server::{
+use open_ultrareview_bridge::bridge::BridgeState;
+use open_ultrareview_bridge::mcp_server::{
     ClearFindingsParams, McpServer, PostFindingsParams, PostFindingsResult, RestoreFindingsParams,
 };
-use ultrareview_bridge::store::FindingsStore;
-use ultrareview_bridge::types::{FindingInput, SeverityInput};
+use open_ultrareview_bridge::store::FindingsStore;
+use open_ultrareview_bridge::types::{FindingInput, SeverityInput};
 
 fn input(title: &str) -> FindingInput {
     FindingInput {
@@ -40,7 +40,7 @@ async fn mcp_tools_mutate_store_and_emit_events() {
 
     let post = server
         .post_findings_direct(PostFindingsParams {
-            source: "ultrareview".to_string(),
+            source: "open-ultrareview".to_string(),
             project: project.to_string_lossy().to_string(),
             findings: vec![input("Finding A")],
         })
@@ -52,7 +52,7 @@ async fn mcp_tools_mutate_store_and_emit_events() {
     let clear = server
         .clear_findings_direct(ClearFindingsParams {
             project: project.to_string_lossy().to_string(),
-            source: "ultrareview".to_string(),
+            source: "open-ultrareview".to_string(),
         })
         .await;
     assert_eq!(clear.cleared_files, vec!["src/lib.rs"]);
@@ -71,7 +71,7 @@ async fn mcp_tools_map_relative_project_to_active_lsp_root() {
 
     let post = server
         .post_findings_direct(PostFindingsParams {
-            source: "ultrareview".to_string(),
+            source: "open-ultrareview".to_string(),
             project: "sample-project".to_string(),
             findings: vec![input("Finding A")],
         })
@@ -93,7 +93,7 @@ async fn restore_tool_undismisses_findings() {
 
     server
         .post_findings_direct(PostFindingsParams {
-            source: "ultrareview".to_string(),
+            source: "open-ultrareview".to_string(),
             project: project.to_string_lossy().to_string(),
             findings: vec![input("Finding A")],
         })

@@ -1,5 +1,5 @@
 [package]
-name = "ultrareview-bridge"
+name = "open-ultrareview-bridge"
 version = "0.1.0"
 edition = "2021"
 description = "Bridge AI code findings to editor diagnostics via MCP + LSP"

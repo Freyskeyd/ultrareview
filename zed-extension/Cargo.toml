@@ -1,5 +1,5 @@
 [package]
-name = "zed_ultrareview_bridge"
+name = "zed_open_ultrareview_bridge"
 version = "0.1.0"
 edition = "2021"
 publish = false

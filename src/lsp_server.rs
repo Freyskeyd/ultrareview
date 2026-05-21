@@ -137,8 +137,8 @@ impl LanguageServer for LspBackend {
                 code_action_provider: Some(CodeActionProviderCapability::Simple(true)),
                 execute_command_provider: Some(ExecuteCommandOptions {
                     commands: vec![
-                        "ultrareview-bridge.dismiss".to_string(),
-                        "ultrareview-bridge.dismiss-file".to_string(),
+                        "open-ultrareview-bridge.dismiss".to_string(),
+                        "open-ultrareview-bridge.dismiss-file".to_string(),
                     ],
                     ..Default::default()
                 }),
@@ -152,9 +152,9 @@ impl LanguageServer for LspBackend {
     }
 
     async fn initialized(&self, _: InitializedParams) {
-        info!("ultrareview-bridge LSP initialized");
+        info!("open-ultrareview-bridge LSP initialized");
         self.client
-            .log_message(MessageType::INFO, "ultrareview-bridge LSP initialized")
+            .log_message(MessageType::INFO, "open-ultrareview-bridge LSP initialized")
             .await;
         self.spawn_event_listener();
         self.publish_all_diagnostics().await;
@@ -254,7 +254,7 @@ impl LanguageServer for LspBackend {
                 kind: Some(CodeActionKind::QUICKFIX),
                 command: Some(Command {
                     title: "Dismiss this finding".to_string(),
-                    command: "ultrareview-bridge.dismiss".to_string(),
+                    command: "open-ultrareview-bridge.dismiss".to_string(),
                     arguments: Some(vec![serde_json::Value::String(finding.id.clone())]),
                 }),
                 diagnostics: Some(vec![finding_to_diagnostic(finding)]),
@@ -268,7 +268,7 @@ impl LanguageServer for LspBackend {
                 kind: Some(CodeActionKind::QUICKFIX),
                 command: Some(Command {
                     title: "Dismiss all findings in this file".to_string(),
-                    command: "ultrareview-bridge.dismiss-file".to_string(),
+                    command: "open-ultrareview-bridge.dismiss-file".to_string(),
                     arguments: Some(vec![
                         serde_json::Value::String(first.source.clone()),
                         serde_json::Value::String(file),
@@ -286,7 +286,7 @@ impl LanguageServer for LspBackend {
         params: ExecuteCommandParams,
     ) -> Result<Option<serde_json::Value>> {
         match params.command.as_str() {
-            "ultrareview-bridge.dismiss" => {
+            "open-ultrareview-bridge.dismiss" => {
                 let Some(id) = params.arguments.first().and_then(|arg| arg.as_str()) else {
                     return Ok(None);
                 };
@@ -295,7 +295,7 @@ impl LanguageServer for LspBackend {
                     self.publish_file_diagnostics(&project, &file).await;
                 }
             }
-            "ultrareview-bridge.dismiss-file" => {
+            "open-ultrareview-bridge.dismiss-file" => {
                 let Some(project) = self.project_root.read().await.clone() else {
                     return Ok(None);
                 };
