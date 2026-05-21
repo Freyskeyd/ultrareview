@@ -70,6 +70,35 @@ dimensions:
     rust-improvements: rust
     arch-improvements: any
 
+mandatory_skills:
+  type: object
+  default:
+    project: []
+    languages: {}
+  description: >
+    Mandatory agent skills to load before dispatching reviewers.
+    Project skills are always loaded.
+    Language skills are loaded when their key matches the detected primary language.
+    Review-relevant guidance from loaded mandatory skills is included
+    in reviewer subagent prompts.
+    If a mandatory skill cannot be loaded, the review fails fast.
+  project:
+    type: array
+    default: []
+    items: string
+    description: >
+      Skill names to load for every review run in this project.
+  languages:
+    type: object
+    default: {}
+    additional_properties:
+      type: array
+      items: string
+    description: >
+      Map of detected language name to skill names.
+      Supported keys are the same language names used by primary language detection,
+      such as rust, python, typescript, javascript, go, java, cpp, and any.
+
 output:
   format:
     type: string

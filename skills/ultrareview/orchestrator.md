@@ -19,11 +19,13 @@ Do not skip phases. Do not reorder.
    - `reviewer.max_parallel`: `10`
    - `verifier.model`: `gpt-5.5`
    - `dimensions`: all 10 enabled
-    - `output.format`: `diagnostics`
-    - `output.report`: `true`
-    - `output.include_improvements`: `true`
-    - `output.verbose`: `false`
-    - `output.bridge`: `auto`
+   - `mandatory_skills.project`: `[]`
+   - `mandatory_skills.languages`: `{}`
+   - `output.format`: `diagnostics`
+   - `output.report`: `true`
+   - `output.include_improvements`: `true`
+   - `output.verbose`: `false`
+   - `output.bridge`: `auto`
 
 4. If `reviewer.model` equals `verifier.model`, emit a warning:
 
@@ -81,7 +83,34 @@ Do not skip phases. Do not reorder.
    use the language with the most changed files.
    If tied, treat as "any".
 
-7. **Resolve dimensions:**
+7. **Load mandatory skills:**
+   - Build the ordered skill list from:
+     - `mandatory_skills.project`
+     - `mandatory_skills.languages.<detected-language>`
+     - `mandatory_skills.languages.any`
+   - De-duplicate skill names while preserving the first configured order.
+   - Load each mandatory skill before resolving dimensions or dispatching reviewers.
+   - Extract the review-relevant guidance from each loaded mandatory skill
+     into a **mandatory skill guidance bundle**.
+     This bundle is the propagation mechanism for reviewer subagents,
+     which start with fresh context and do not automatically inherit
+     the orchestrator's loaded skill context.
+   - If a skill cannot be loaded, stop the review and print:
+
+     ```
+     error: mandatory skill '<skill>' could not be loaded.
+     Configure .ultrareview.yml with installed skill names only.
+     ```
+
+   - Report loaded mandatory skills:
+
+     ```
+     Mandatory skills: tech-rust, shadcn
+     ```
+
+     If no mandatory skills are configured, omit this line.
+
+8. **Resolve dimensions:**
    - If `dimensions` is set to `auto` (the default),
      enable all dimensions whose `language` in the language_map
      is either `any` or matches the detected language.
@@ -107,12 +136,13 @@ Do not skip phases. Do not reorder.
      Skipped: best-practices (rust-only), rust-improvements (rust-only)
      ```
 
-8. Prepare the **review context bundle**:
+9. Prepare the **review context bundle**:
    - The combined diff (full text)
    - For each changed file: path, full content, and language/extension
+   - The mandatory skill guidance bundle from Phase 2, step 7
    - Total line count and file count (for progress reporting)
 
-9. Report to the user:
+10. Report to the user:
 
    ```
    Ultrareview: reviewing N files, ~M lines changed
@@ -128,6 +158,7 @@ Do not skip phases. Do not reorder.
      (`prompts/_preamble.md` for bug dimensions,
       `prompts/_preamble-improvements.md` for improvement dimensions)
    - The dimension-specific prompt (`prompts/<dimension>.md`)
+   - The mandatory skill guidance bundle, when any mandatory skills were loaded
    - The finding JSON schema from `schemas/finding.json`
    - The review context bundle from Phase 2
 
