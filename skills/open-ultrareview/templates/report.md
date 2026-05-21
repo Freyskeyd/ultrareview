@@ -1,4 +1,4 @@
-# Ultrareview Report
+# Open Ultrareview Report
 
 **Date:** {date}
 **Reviewer model:** {reviewer_model}

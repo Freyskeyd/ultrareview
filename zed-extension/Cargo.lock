@@ -750,7 +750,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "zed_ultrareview_bridge"
+name = "zed_open_ultrareview_bridge"
 version = "0.1.0"
 dependencies = [
  "zed_extension_api",

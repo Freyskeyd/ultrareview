@@ -1,4 +1,4 @@
-# Ultrareview Orchestrator
+# Open Ultrareview Orchestrator
 
 Follow these phases exactly, in order.
 Do not skip phases. Do not reorder.
@@ -10,7 +10,7 @@ Do not skip phases. Do not reorder.
    - `--verifier=<model>` (optional)
    - Remaining positional argument as `<base-ref>` (optional)
 
-2. Check if `.ultrareview.yml` exists at the project root.
+2. Check if `.open-ultrareview.yml` exists at the project root.
    If it exists, read it and use its values as defaults.
 
 3. Apply CLI overrides on top of config file values.
@@ -145,7 +145,7 @@ Do not skip phases. Do not reorder.
 10. Report to the user:
 
    ```
-   Ultrareview: reviewing N files, ~M lines changed
+   Open Ultrareview: reviewing N files, ~M lines changed
    Reviewer model: <model> | Verifier model: <model>
    Dimensions: <comma-separated list> (K enabled)
    ```
@@ -271,21 +271,21 @@ use semantic understanding, not string matching.
    regardless of verdict.
 
 3. If `output.bridge` is `auto`
-   and ultrareview-bridge MCP tools are available,
+   and open-ultrareview-bridge MCP tools are available,
    publish confirmed findings to the bridge before printing diagnostics:
 
    - Call `clear_findings` with:
      - `project`: the absolute project root from Phase 2
-     - `source`: `ultrareview`
+     - `source`: `open-ultrareview`
    - Call `post_findings` with:
      - `project`: the same absolute project root
-     - `source`: `ultrareview`
+     - `source`: `open-ultrareview`
      - `findings`: all confirmed high-confidence and medium-confidence findings
        that will be emitted as diagnostics
 
-   Map each ultrareview finding to a bridge finding as follows:
+   Map each open-ultrareview finding to a bridge finding as follows:
 
-   | Bridge field | Ultrareview value |
+   | Bridge field | Open Ultrareview value |
    |--------------|-------------------|
    | `file` | relative file path |
    | `line` | 1-indexed line |
@@ -328,22 +328,22 @@ use semantic understanding, not string matching.
 5. After diagnostics, print a summary line:
 
    ```
-   Ultrareview complete: X confirmed findings
+   Open Ultrareview complete: X confirmed findings
    (Y bugs, Z improvements) across N dimensions.
    W findings rejected by verifier.
    ```
 
 6. If `output.report` is `true`,
    generate a Markdown report using `templates/report.md`
-   and save it to `.ultrareview-report.md` in the project root.
+   and save it to `.open-ultrareview-report.md` in the project root.
    Report to the user:
 
    ```
-   Full report saved to .ultrareview-report.md
+   Full report saved to .open-ultrareview-report.md
    ```
 
 7. If all findings were rejected or no findings were reported:
 
    ```
-   Ultrareview complete: no issues found across N dimensions.
+   Open Ultrareview complete: no issues found across N dimensions.
    ```

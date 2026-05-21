@@ -1,13 +1,13 @@
 use clap::{Parser, Subcommand};
+use open_ultrareview_bridge::bridge::BridgeState;
+use open_ultrareview_bridge::lsp_server::LspBackend;
+use open_ultrareview_bridge::mcp_server;
+use open_ultrareview_bridge::store::FindingsStore;
 use tokio_util::sync::CancellationToken;
 use tracing::info;
-use ultrareview_bridge::bridge::BridgeState;
-use ultrareview_bridge::lsp_server::LspBackend;
-use ultrareview_bridge::mcp_server;
-use ultrareview_bridge::store::FindingsStore;
 
 #[derive(Parser)]
-#[command(name = "ultrareview-bridge")]
+#[command(name = "open-ultrareview-bridge")]
 #[command(version)]
 #[command(about = "Bridge AI code findings to editor diagnostics")]
 struct Cli {
@@ -38,7 +38,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     tracing_subscriber::fmt()
         .with_env_filter(
             tracing_subscriber::EnvFilter::from_default_env()
-                .add_directive("ultrareview_bridge=info".parse()?),
+                .add_directive("open_ultrareview_bridge=info".parse()?),
         )
         .with_writer(std::io::stderr)
         .init();
@@ -46,7 +46,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     match Cli::parse().command {
         Commands::Lsp { port } => run_lsp_and_mcp(port).await?,
         Commands::Mcp { port } => run_mcp_only(port).await?,
-        Commands::Version => println!("ultrareview-bridge {}", env!("CARGO_PKG_VERSION")),
+        Commands::Version => println!("open-ultrareview-bridge {}", env!("CARGO_PKG_VERSION")),
     }
 
     Ok(())

@@ -1,13 +1,13 @@
-id = "ultrareview-bridge"
-name = "Ultrareview Bridge"
+id = "open-ultrareview-bridge"
+name = "Open Ultrareview Bridge"
 description = "Display AI-generated code findings as Zed diagnostics"
 version = "0.1.0"
 schema_version = 1
-authors = ["ultrareview-bridge"]
-repository = "https://github.com/ultrareview/ultrareview-bridge"
+authors = ["open-ultrareview-bridge"]
+repository = "https://github.com/Freyskeyd/open-ultrareview"
 
-[language_servers.ultrareview-bridge]
-name = "Ultrareview Bridge"
+[language_servers.open-ultrareview-bridge]
+name = "Open Ultrareview Bridge"
 language = "Rust"
 languages = [
   "Rust",
@@ -24,7 +24,7 @@ languages = [
   "TOML",
 ]
 
-[language_servers.ultrareview-bridge.language_ids]
+[language_servers.open-ultrareview-bridge.language_ids]
 Rust = "rust"
 Markdown = "markdown"
 TypeScript = "typescript"

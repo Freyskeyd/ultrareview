@@ -1,8 +1,8 @@
-# Ultrareview
+# Open Ultrareview
 
-> AI code review that shows up as editor squiggles.
+> Claude-style Ultrareview, open source, local, and multi-model.
 
-Ultrareview turns multi-agent AI code review into diagnostics you can see where you
+Open Ultrareview turns multi-agent AI code review into diagnostics you can see where you
 already work: your editor.
 Specialized reviewer agents inspect a change, a second model verifies their findings,
 and confirmed issues flow through MCP and LSP into inline diagnostics.
@@ -13,17 +13,21 @@ already work.
 
 This repository contains three pieces that work together:
 
-- `skills/ultrareview/`, the multi-agent review skill for AI coding tools.
-- `ultrareview-bridge`, a Rust binary that exposes MCP tools and an LSP server.
+- `skills/open-ultrareview/`, the multi-agent review skill for AI coding tools.
+- `open-ultrareview-bridge`, a Rust binary that exposes MCP tools and an LSP server.
 - `zed-extension/`, a local Zed extension that registers the bridge as a language server.
 
-## Why Ultrareview?
+## Why Open Ultrareview?
+
+Claude's Ultrareview popularized the idea of deeper AI review.
+Open Ultrareview brings that workflow into an open source, local-first toolchain that
+can run with different models and agent programs.
 
 Ordinary AI code review often stops at a chat transcript or pull request comment.
 That makes findings easy to miss, hard to triage, and disconnected from the code you
 are currently editing.
 
-Ultrareview is different because it is built around the review loop, not just the model
+Open Ultrareview is different because it is built around the review loop, not just the model
 response:
 
 - Multiple specialized reviewer agents inspect the same diff from different angles.
@@ -37,20 +41,20 @@ editor-native development tool.
 
 ## How It Works
 
-Ultrareview separates review, transport, storage, and display.
+Open Ultrareview separates review, transport, storage, and display.
 The skill produces verified findings.
 The bridge stores them and exposes them to editors.
 
 ```text
 +----------------------+        +------------------------+
 | AI coding tool       |        | Editor                 |
-| /ultrareview skill   |        | Zed or any LSP client  |
+| /open-ultrareview skill   |        | Zed or any LSP client  |
 +----------+-----------+        +-----------+------------+
            |                                ^
            | MCP tools                      | LSP diagnostics
            v                                |
 +----------+--------------------------------+------------+
-| ultrareview-bridge                                     |
+| open-ultrareview-bridge                                     |
 |                                                        |
 |  MCP HTTP :19999/mcp  ->  FindingsStore  ->  LSP stdio |
 +--------------------------------------------------------+
@@ -70,7 +74,7 @@ cargo install --path .
 Configure your editor or extension to launch the bridge as a stdio LSP server:
 
 ```bash
-ultrareview-bridge lsp --port 19999
+open-ultrareview-bridge lsp --port 19999
 ```
 
 When launched this way, the process starts the LSP server on stdio for the editor and
@@ -81,11 +85,11 @@ You can also run only the MCP side for agents without launching an editor langua
 server:
 
 ```bash
-ultrareview-bridge mcp --port 19999
+open-ultrareview-bridge mcp --port 19999
 ```
 
 The bridge is useful once an MCP-compatible AI tool connects to it and posts findings.
-The included `ultrareview` skill is the intended producer.
+The included `open-ultrareview` skill is the intended producer.
 
 ## Zed Setup
 
@@ -98,9 +102,9 @@ This means the following settings-only configuration is invalid and Zed will rej
 ```json
 {
   "lsp": {
-    "ultrareview-bridge": {
+    "open-ultrareview-bridge": {
       "binary": {
-        "path": "ultrareview-bridge",
+        "path": "open-ultrareview-bridge",
         "arguments": ["lsp"]
       }
     }
@@ -108,12 +112,12 @@ This means the following settings-only configuration is invalid and Zed will rej
 }
 ```
 
-To use Ultrareview with Zed, install the local extension in `zed-extension/`.
-The extension registers `ultrareview-bridge` as a language server adapter and returns
+To use Open Ultrareview with Zed, install the local extension in `zed-extension/`.
+The extension registers `open-ultrareview-bridge` as a language server adapter and returns
 this command from `language_server_command`:
 
 ```text
-ultrareview-bridge lsp --port 19999
+open-ultrareview-bridge lsp --port 19999
 ```
 
 Install and enable it locally:
@@ -121,7 +125,7 @@ Install and enable it locally:
 1. Run `cargo install --path .` from this repository.
 2. In Zed, run `zed: install dev extension` from the command palette.
 3. Select this repository's `zed-extension/` directory.
-4. Add `ultrareview-bridge` to each language where you want diagnostics.
+4. Add `open-ultrareview-bridge` to each language where you want diagnostics.
 
 For Rust and Markdown:
 
@@ -129,10 +133,10 @@ For Rust and Markdown:
 {
   "languages": {
     "Rust": {
-      "language_servers": ["rust-analyzer", "ultrareview-bridge", "..."]
+      "language_servers": ["rust-analyzer", "open-ultrareview-bridge", "..."]
     },
     "Markdown": {
-      "language_servers": ["ultrareview-bridge", "..."]
+      "language_servers": ["open-ultrareview-bridge", "..."]
     }
   }
 }
@@ -143,12 +147,12 @@ If the binary is not on Zed's `PATH`, point the extension at it explicitly:
 ```json
 {
   "lsp": {
-    "ultrareview-bridge": {
+    "open-ultrareview-bridge": {
       "binary": {
-        "path": "/absolute/path/to/ultrareview-bridge",
+        "path": "/absolute/path/to/open-ultrareview-bridge",
         "arguments": ["lsp", "--port", "19999"],
         "env": {
-          "RUST_LOG": "ultrareview_bridge=debug"
+          "RUST_LOG": "open_ultrareview_bridge=debug"
         }
       }
     }
@@ -159,17 +163,17 @@ If the binary is not on Zed's `PATH`, point the extension at it explicitly:
 After startup, `Zed.log` should contain both a process launch line and an LSP message:
 
 ```text
-starting language server process. binary path: "ultrareview-bridge"
-ultrareview-bridge LSP initialized
+starting language server process. binary path: "open-ultrareview-bridge"
+open-ultrareview-bridge LSP initialized
 ```
 
 Once findings are posted through MCP, they appear as editor diagnostics.
 Click a diagnostic and use the available code action to dismiss it when it is no
 longer useful.
 
-## Ultrareview Skill
+## Open Ultrareview Skill
 
-The bridge-aware `ultrareview` agent skill lives in `skills/ultrareview/`.
+The bridge-aware `open-ultrareview` agent skill lives in `skills/open-ultrareview/`.
 It runs a multi-agent review workflow locally:
 
 - Reviewer agents inspect the diff in parallel across areas such as logic bugs,
@@ -177,23 +181,23 @@ It runs a multi-agent review workflow locally:
 - A verifier agent independently checks each candidate finding.
 - Confirmed findings are reported to the user.
 - When the bridge MCP tools are available, confirmed findings are also posted with
-  `source: "ultrareview"`.
+  `source: "open-ultrareview"`.
 
 Invoke it from a compatible agent environment:
 
 ```text
-/ultrareview
+/open-ultrareview
 ```
 
 The skill also accepts optional arguments for reviewer model, verifier model, and base
 git ref:
 
 ```text
-/ultrareview --reviewer=claude-sonnet-4 --verifier=o3
-/ultrareview main
+/open-ultrareview --reviewer=claude-sonnet-4 --verifier=o3
+/open-ultrareview main
 ```
 
-If `.ultrareview.yml` exists at the project root, the skill reads it for defaults.
+If `.open-ultrareview.yml` exists at the project root, the skill reads it for defaults.
 Command-line arguments override config values.
 Projects can also require review skills to be loaded before reviewers run:
 
@@ -225,7 +229,7 @@ the connected editor.
 
 ## Dismiss Findings
 
-Ultrareview is designed for repeated review runs, so findings need lifecycle controls.
+Open Ultrareview is designed for repeated review runs, so findings need lifecycle controls.
 
 Click on a diagnostic in your editor and use the code action `Dismiss this finding` to
 hide it.
@@ -235,7 +239,7 @@ If you want to bring dismissed findings back, call `restore_findings` through MC
 
 ## For Maintainers
 
-Ultrareview is aimed at maintainers who want stronger review coverage without turning
+Open Ultrareview is aimed at maintainers who want stronger review coverage without turning
 every contribution into a long prompt-management session.
 
 It helps with:
@@ -251,7 +255,7 @@ Watch it if you care about MCP, LSP, Zed integration, or multi-agent review work
 
 ## For Power Users
 
-Ultrareview is for AI coding power users who already run agents locally and want those
+Open Ultrareview is for AI coding power users who already run agents locally and want those
 agents to leave useful traces in the editor.
 
 The bridge is intentionally small:
@@ -263,7 +267,7 @@ The bridge is intentionally small:
 
 The current editor path is Zed through the included local extension.
 Other LSP-capable editors can integrate by configuring
-`ultrareview-bridge lsp --port 19999` as a stdio language server, then connecting
+`open-ultrareview-bridge lsp --port 19999` as a stdio language server, then connecting
 agents to the MCP endpoint started by that process.
 
 ## Roadmap
@@ -286,7 +290,7 @@ Good first contribution areas include:
 - Trying the Zed setup and reporting rough edges.
 - Improving MCP client compatibility.
 - Hardening LSP diagnostic behavior across languages.
-- Improving the `ultrareview` skill prompts and verifier workflow.
+- Improving the `open-ultrareview` skill prompts and verifier workflow.
 - Packaging the bridge for easier installation.
 
 Please keep changes focused.
@@ -297,14 +301,14 @@ The bridge should stay understandable, local-first, and easy to run.
 Suggested GitHub description:
 
 ```text
-Multi-agent AI code review, independently verified and displayed as editor diagnostics through MCP and LSP.
+Claude-style Ultrareview, open source, local, multi-model, and displayed as editor diagnostics.
 ```
 
 Suggested topics:
 
 ```text
 ai-code-review, mcp, lsp, zed-extension, developer-tools, code-review,
-multi-agent, rust, editor-diagnostics, ai-agents
+multi-agent, rust, editor-diagnostics, ai-agents, local-ai, open-source
 ```
 
 ## License
