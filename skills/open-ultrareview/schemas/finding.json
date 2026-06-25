@@ -18,7 +18,8 @@
         "best-practices",
         "architecture",
         "rust-improvements",
-        "arch-improvements"
+        "arch-improvements",
+        "code-reuse"
       ]
     },
     "findings": {
