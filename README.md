@@ -177,7 +177,8 @@ The bridge-aware `open-ultrareview` agent skill lives in `skills/open-ultrarevie
 It runs a multi-agent review workflow locally:
 
 - Reviewer agents inspect the diff in parallel across areas such as logic bugs,
-  concurrency, security, error handling, performance, API contracts, and architecture.
+  concurrency, security, error handling, performance, API contracts, architecture,
+  and code reuse.
 - A verifier agent independently checks each candidate finding.
 - Confirmed findings are reported to the user.
 - When the bridge MCP tools are available, confirmed findings are also posted with

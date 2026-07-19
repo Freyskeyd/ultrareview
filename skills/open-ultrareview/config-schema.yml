@@ -50,6 +50,7 @@ dimensions:
     - api-contracts       # language: any
     - performance         # language: any
     - architecture        # language: any
+    - code-reuse          # language: any
 
     # Rust-specific dimensions (enabled when Rust files are in diff)
     - best-practices      # language: rust
@@ -66,6 +67,7 @@ dimensions:
     api-contracts: any
     performance: any
     architecture: any
+    code-reuse: any
     best-practices: rust
     rust-improvements: rust
     arch-improvements: any
@@ -116,8 +118,10 @@ output:
     type: boolean
     default: true
     description: >
-      Include improvement findings (info severity) in output.
-      Set false to only see bugs.
+      Include improvement and maintainability findings.
+      Most improvement dimensions emit info diagnostics;
+      code-reuse emits warning diagnostics.
+      Set false to only see correctness bug findings.
   verbose:
     type: boolean
     default: false

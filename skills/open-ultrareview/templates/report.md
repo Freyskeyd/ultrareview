@@ -47,6 +47,7 @@
 #### [{dimension}] {title}
 
 - **File:** `{file}:{line}:{col}`
+- **Severity:** {severity}
 - **Rationale:** {rationale}
 - **Suggestion:** {suggestion}
 - **Verified by:** {verifier_model} ({confidence} confidence)

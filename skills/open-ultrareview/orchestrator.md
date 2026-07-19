@@ -18,7 +18,7 @@ Do not skip phases. Do not reorder.
    - `reviewer.model`: `claude-opus-4-6`
    - `reviewer.max_parallel`: `10`
    - `verifier.model`: `gpt-5.5`
-   - `dimensions`: all 10 enabled
+   - `dimensions`: all 11 enabled
    - `mandatory_skills.project`: `[]`
    - `mandatory_skills.languages`: `{}`
    - `output.format`: `diagnostics`
@@ -56,6 +56,8 @@ Do not skip phases. Do not reorder.
    ```
 
    Merge both diffs into a combined changeset.
+   This combined changeset is the full review scope.
+   Do not replace it with only the latest commit diff.
 
 3. If the combined diff is empty, exit early:
 
@@ -123,7 +125,7 @@ Do not skip phases. Do not reorder.
      Auto-enabled dimensions: logic-bugs, concurrency,
        error-handling, security, api-contracts, performance,
        architecture, best-practices, rust-improvements,
-       arch-improvements (10/10)
+       arch-improvements, code-reuse (11/11)
      ```
 
      Or for a non-Rust project:
@@ -132,12 +134,12 @@ Do not skip phases. Do not reorder.
      Detected language: typescript (from 8 .ts files)
      Auto-enabled dimensions: logic-bugs, concurrency,
        error-handling, security, api-contracts, performance,
-       architecture, arch-improvements (8/10)
+       architecture, arch-improvements, code-reuse (9/11)
      Skipped: best-practices (rust-only), rust-improvements (rust-only)
      ```
 
 9. Prepare the **review context bundle**:
-   - The combined diff (full text)
+   - The combined diff (full text), covering the full review scope
    - For each changed file: path, full content, and language/extension
    - The mandatory skill guidance bundle from Phase 2, step 7
    - Total line count and file count (for progress reporting)
@@ -155,8 +157,9 @@ Do not skip phases. Do not reorder.
 1. For each enabled dimension,
    prepare a reviewer prompt by concatenating:
    - The appropriate preamble
-     (`prompts/_preamble.md` for bug dimensions,
-      `prompts/_preamble-improvements.md` for improvement dimensions)
+      (`prompts/_preamble.md` for bug dimensions,
+       `prompts/_preamble-improvements.md` for improvement dimensions)
+      Treat `code-reuse` as an improvement dimension for prompt selection.
    - The dimension-specific prompt (`prompts/<dimension>.md`)
    - The mandatory skill guidance bundle, when any mandatory skills were loaded
    - The finding JSON schema from `schemas/finding.json`
@@ -231,6 +234,8 @@ use semantic understanding, not string matching.
    - For each finding in the group:
      only the finding ID, line, column, and finding type
      (bug or improvement).
+     Treat `code-reuse` as an improvement-type finding for verification;
+     its final diagnostic severity remains `warning`.
      Do NOT include the dimension, title, evidence,
      rationale, or suggestion.
      The verifier must not know which dimension flagged the location.
@@ -269,6 +274,7 @@ use semantic understanding, not string matching.
 2. If `include_improvements` is `false`,
    suppress all findings from improvement dimensions
    regardless of verdict.
+   This includes `code-reuse`, even though its diagnostic severity is `warning`.
 
 3. If `output.bridge` is `auto`
    and open-ultrareview-bridge MCP tools are available,
@@ -290,7 +296,7 @@ use semantic understanding, not string matching.
    | `file` | relative file path |
    | `line` | 1-indexed line |
    | `col` | 1-indexed column, defaulting to `1` when missing |
-   | `severity` | `error` for bug findings, `info` for improvement findings |
+   | `severity` | `error` for bug findings, `warning` for `code-reuse`, `info` for other improvement findings |
    | `category` | review dimension |
    | `title` | finding title, including `[medium confidence]` when applicable |
    | `evidence` | bug evidence, or `null` for improvements |
@@ -322,6 +328,15 @@ use semantic understanding, not string matching.
      = verified-by: <verifier-model> (independent confirmation)
    ```
 
+   For code reuse findings:
+
+   ```
+   <file>:<line>:<col>: warning[code-reuse]: <title>
+     = rationale: <rationale>
+     = suggestion: <suggestion>
+     = verified-by: <verifier-model> (independent confirmation)
+   ```
+
    For medium-confidence findings, append `[medium confidence]`
    after the dimension tag.
 
@@ -329,7 +344,7 @@ use semantic understanding, not string matching.
 
    ```
    Open Ultrareview complete: X confirmed findings
-   (Y bugs, Z improvements) across N dimensions.
+   (Y bugs, Z improvement or maintainability findings) across N dimensions.
    W findings rejected by verifier.
    ```
 
